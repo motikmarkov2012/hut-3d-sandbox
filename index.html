@@ -19,7 +19,7 @@
     <!-- Шапка -->
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-zinc-500 bg-zinc-900 px-2.5 py-1 border border-zinc-800">v1.3 (Выбор точки AR)</span>
+        <span class="text-xs text-zinc-500 bg-zinc-900 px-2.5 py-1 border border-zinc-800">v1.4 (Точный выбор точки)</span>
     </header>
 
     <!-- Главный экран с одной кнопкой -->
@@ -27,12 +27,12 @@
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку, включите камеру, наведите на пол и нажмите на экран в нужном месте, чтобы закрепить избушку.
+                Нажмите кнопку, наведите камеру на пол до появления точки-прицела и нажмите на экран, чтобы поставить избушку.
             </p>
             <div class="pt-4">
-                <!-- Кнопка теперь фиолетовая (violet) для новой версии -->
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-violet-950/50">
-                    Включить камеру и выбрать точку
+                <!-- Кнопка теперь янтарная (amber) для версии v1.4 -->
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-amber-600 hover:bg-amber-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-amber-950/50">
+                    Включить камеру и поставить точку
                 </button>
             </div>
         </div>
@@ -45,7 +45,7 @@
             src="izbushka.glb" 
             scale="0.3 0.3 0.3"
             ar
-            ar-modes="scene-viewer quick-look webxr"
+            ar-modes="webxr scene-viewer quick-look"
             ar-placement="floor"
             camera-controls>
         </model-viewer>
