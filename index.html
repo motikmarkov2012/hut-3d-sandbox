@@ -19,7 +19,7 @@
     <!-- Шапка -->
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-zinc-600">AR Sandbox</span>
+        <span class="text-xs text-zinc-500 bg-zinc-900 px-2.5 py-1 border border-zinc-800">v1.2 (Синяя версия)</span>
     </header>
 
     <!-- Главный экран с одной кнопкой -->
@@ -27,10 +27,11 @@
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку ниже, чтобы включить камеру, разместить избушку на полу и ходить вокруг неё в реальном мире.
+                Нажмите кнопку ниже, чтобы включить камеру и поставить избушку перед собой.
             </p>
             <div class="pt-4">
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-emerald-950/50">
+                <!-- Кнопка теперь синяя (indigo) -->
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-indigo-950/50">
                     Включить камеру и ходить вокруг модели
                 </button>
             </div>
@@ -42,10 +43,9 @@
         <model-viewer 
             id="ar-model-viewer"
             src="izbushka.glb" 
-            scale="0.1 0.1 0.1"
+            scale="0.3 0.3 0.3"
             ar
-            ar-modes="webxr scene-viewer quick-look"
-            ar-placement="floor"
+            ar-modes="scene-viewer quick-look webxr"
             camera-controls>
         </model-viewer>
     </div>
@@ -56,7 +56,6 @@
         const modelViewer = document.getElementById('ar-model-viewer');
 
         openArBtn.addEventListener('click', () => {
-            // Проверяем, поддерживает ли устройство AR, и вызываем режим дополненной реальности
             if (modelViewer.canActivateAR) {
                 modelViewer.activateAR();
             } else {
