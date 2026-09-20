@@ -4,65 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AR Просмотр — Баба Яга</title>
-    <!-- Подключаем Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Подключаем model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-    </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col justify-between select-none">
 
-    <!-- Шапка -->
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-rose-400 bg-rose-950/60 px-2.5 py-1 border border-rose-800/60">v1.6 (Универсальный AR)</span>
+        <span class="text-xs text-purple-400 bg-purple-950/60 px-2.5 py-1 border border-purple-800/60">v1.7 (Исправление масштаба SW)</span>
     </header>
 
-    <!-- Главный экран -->
     <main id="welcome-screen" class="flex-1 flex flex-col items-center justify-center px-4">
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку ниже, чтобы запустить камеру. Телефон сам покажет рамку или поверхность для размещения избушки.
+                Код принудительно уменьшил модель, чтобы компенсировать миллиметры из SolidWorks. Нажмите кнопку для запуска.
             </p>
             <div class="pt-4">
-                <!-- Малиновая/розовая кнопка версии v1.6 -->
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-rose-950/50">
-                    Включить камеру и поставить модель
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-purple-950/50">
+                    Запустить камеру (Масштаб 0.001)
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- 3D / AR просмотрщик -->
     <div class="hidden">
         <model-viewer 
             id="ar-model-viewer"
             src="izbushka.glb" 
-            scale="0.2 0.2 0.2"
+            scale="0.001 0.001 0.001" 
             ar
             ar-modes="scene-viewer quick-look"
             camera-controls>
         </model-viewer>
     </div>
 
-    <!-- Скрипт запуска -->
     <script>
         const openArBtn = document.getElementById('open-ar-btn');
         const modelViewer = document.getElementById('ar-model-viewer');
 
         openArBtn.addEventListener('click', () => {
-            // Универсальный вызов AR для iOS (Quick Look) и Android (Scene Viewer)
             if (modelViewer.canActivateAR) {
                 modelViewer.activateAR();
             } else {
-                // Запасной вариант, если браузер заблокировал прямой вызов
-                modelViewer.activateAR().catch(err => {
-                    alert('Пожалуйста, нажмите на встроенную AR-кнопку на экране или откройте через стандартный браузер (Safari для iPhone, Chrome для Android).');
+                modelViewer.activateAR().catch(() => {
+                    alert('Откройте эту страницу со смартфона через Safari (iPhone) или Chrome (Android).');
                 });
             }
         });
