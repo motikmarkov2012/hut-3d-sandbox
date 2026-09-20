@@ -19,39 +19,44 @@
     <!-- Шапка -->
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-zinc-500 bg-zinc-900 px-2.5 py-1 border border-zinc-800">v1.4 (Точный выбор точки)</span>
+        <span class="text-xs text-emerald-400 bg-emerald-950/60 px-2.5 py-1 border border-emerald-800/60">v1.5 (Кнопка фиксации точки)</span>
     </header>
 
-    <!-- Главный экран с одной кнопкой -->
+    <!-- Главный экран -->
     <main id="welcome-screen" class="flex-1 flex flex-col items-center justify-center px-4">
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку, наведите камеру на пол до появления точки-прицела и нажмите на экран, чтобы поставить избушку.
+                Нажмите кнопку, наведите камеру на пол, дождитесь появления точки и нажмите специальную кнопку на экране, чтобы закрепить избушку.
             </p>
             <div class="pt-4">
-                <!-- Кнопка теперь янтарная (amber) для версии v1.4 -->
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-amber-600 hover:bg-amber-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-amber-950/50">
-                    Включить камеру и поставить точку
+                <!-- Яркая изумрудная кнопка версии v1.5 -->
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-emerald-950/50">
+                    Включить камеру с выбором точки
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- Скрытый контейнер с model-viewer -->
+    <!-- 3D / AR просмотрщик -->
     <div class="hidden">
         <model-viewer 
             id="ar-model-viewer"
             src="izbushka.glb" 
             scale="0.3 0.3 0.3"
             ar
-            ar-modes="webxr scene-viewer quick-look"
-            ar-placement="floor"
+            ar-modes="webxr"
+            ar-scale="fixed"
             camera-controls>
+            
+            <!-- Кастомная кнопка прямо внутри AR-режима для закрепления модели -->
+            <button slot="ar-button" id="place-btn" class="hidden">
+                Поставить избушку сюда
+            </button>
         </model-viewer>
     </div>
 
-    <!-- Скрипт автоматического запуска камеры при нажатии на кнопку -->
+    <!-- Скрипт запуска -->
     <script>
         const openArBtn = document.getElementById('open-ar-btn');
         const modelViewer = document.getElementById('ar-model-viewer');
@@ -60,7 +65,7 @@
             if (modelViewer.canActivateAR) {
                 modelViewer.activateAR();
             } else {
-                alert('К сожалению, режим дополненной реальности (камера) не поддерживается на этом устройстве или ПК. Пожалуйста, откройте сайт со смартфона (iPhone или Android).');
+                alert('Режим WebXR AR не поддерживается на этом устройстве. Убедитесь, что вы открываете сайт со смартфона с поддержкой AR.');
             }
         });
     </script>
