@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр 3D Модели — Баба Яга</title>
+    <!-- Подключаем Tailwind CSS для строгого и аккуратного интерфейса -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключаем официальный компонент model-viewer для кроссплатформенного 3D и AR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col justify-between select-none">
+
+    <!-- Шапка (Строгий стиль) -->
+    <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
+        <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
+        <span class="text-xs text-zinc-600">3D Sandbox v1.0</span>
+    </header>
+
+    <!-- Главный экран с одной кнопкой -->
+    <main id="welcome-screen" class="flex-1 flex flex-col items-center justify-center px-4">
+        <div class="max-w-md text-center space-y-6">
+            <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги</h2>
+            <p class="text-sm text-zinc-400 leading-relaxed">
+                Нажмите кнопку ниже, чтобы запустить полноэкранный режим. Вы сможете вращать модель, приближать её и изучать со всех сторон на iPhone и Android.
+            </p>
+            <div class="pt-4">
+                <button id="open-viewer-btn" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-emerald-950/50">
+                    Посмотреть и ходить вокруг модели
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Полноэкранный блок с 3D просмотрщиком (скрыт по умолчанию) -->
+    <div id="viewer-container" class="fixed inset-0 bg-zinc-950 z-50 hidden flex flex-col">
+        <!-- Верхняя панель управления просмотрщиком -->
+        <div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-10 pointer-events-none">
+            <span class="text-xs tracking-wider uppercase text-zinc-400 bg-zinc-900/80 px-3 py-1.5 border border-zinc-800 backdrop-blur-md">Режим осмотра</span>
+            <button id="close-viewer-btn" class="pointer-events-auto bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white px-4 py-2 border border-zinc-800 text-sm transition-colors backdrop-blur-md">
+                Закрыть ✕
+            </button>
+        </div>
+
+        <!-- Сам 3D компонент (ссылается на izbushka.glb в том же репозитории) -->
+        <model-viewer 
+            id="model-viewer-el"
+            src="izbushka.glb" 
+            ios-src=""
+            alt="3D Модель избушки" 
+            ar
+            ar-modes="webxr scene-viewer quick-look"
+            camera-controls 
+            auto-rotate
+            touch-action="pan-y"
+            class="w-full h-full">
+            
+            <!-- Индикатор загрузки -->
+            <div slot="progress-bar" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <div class="inline-block w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                <p class="text-xs text-zinc-400 tracking-wider">Загрузка модели...</p>
+            </div>
+        </model-viewer>
+
+        <!-- Подсказка снизу для мобильных устройств -->
+        <div class="absolute bottom-6 left-0 right-0 text-center pointer-events-none">
+            <p class="text-xs text-zinc-500 bg-zinc-950/60 inline-block px-4 py-2 border border-zinc-900 backdrop-blur-sm">
+                Используйте один палец для вращения, два — для перемещения и масштабирования
+            </p>
+        </div>
+    </div>
+
+    <!-- Простая логика переключения экранов -->
+    <script>
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const viewerContainer = document.getElementById('viewer-container');
+        const openBtn = document.getElementById('open-viewer-btn');
+        const closeBtn = document.getElementById('close-viewer-btn');
+
+        openBtn.addEventListener('click', () => {
+            welcomeScreen.classList.add('hidden');
+            viewerContainer.classList.remove('hidden');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            viewerContainer.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
