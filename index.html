@@ -27,7 +27,7 @@
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку ниже, чтобы включить камеру, разместить избушку в пространстве и ходить вокруг неё в реальном мире.
+                Нажмите кнопку ниже, чтобы включить камеру, разместить избушку на полу и ходить вокруг неё в реальном мире.
             </p>
             <div class="pt-4">
                 <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-emerald-950/50">
@@ -42,8 +42,10 @@
         <model-viewer 
             id="ar-model-viewer"
             src="izbushka.glb" 
+            scale="0.1 0.1 0.1"
             ar
             ar-modes="webxr scene-viewer quick-look"
+            ar-placement="floor"
             camera-controls>
         </model-viewer>
     </div>
