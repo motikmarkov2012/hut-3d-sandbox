@@ -19,7 +19,7 @@
     <!-- Шапка -->
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-emerald-400 bg-emerald-950/60 px-2.5 py-1 border border-emerald-800/60">v1.5 (Кнопка фиксации точки)</span>
+        <span class="text-xs text-rose-400 bg-rose-950/60 px-2.5 py-1 border border-rose-800/60">v1.6 (Универсальный AR)</span>
     </header>
 
     <!-- Главный экран -->
@@ -27,12 +27,12 @@
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку, наведите камеру на пол, дождитесь появления точки и нажмите специальную кнопку на экране, чтобы закрепить избушку.
+                Нажмите кнопку ниже, чтобы запустить камеру. Телефон сам покажет рамку или поверхность для размещения избушки.
             </p>
             <div class="pt-4">
-                <!-- Яркая изумрудная кнопка версии v1.5 -->
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-emerald-950/50">
-                    Включить камеру с выбором точки
+                <!-- Малиновая/розовая кнопка версии v1.6 -->
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-rose-950/50">
+                    Включить камеру и поставить модель
                 </button>
             </div>
         </div>
@@ -43,16 +43,10 @@
         <model-viewer 
             id="ar-model-viewer"
             src="izbushka.glb" 
-            scale="0.3 0.3 0.3"
+            scale="0.2 0.2 0.2"
             ar
-            ar-modes="webxr"
-            ar-scale="fixed"
+            ar-modes="scene-viewer quick-look"
             camera-controls>
-            
-            <!-- Кастомная кнопка прямо внутри AR-режима для закрепления модели -->
-            <button slot="ar-button" id="place-btn" class="hidden">
-                Поставить избушку сюда
-            </button>
         </model-viewer>
     </div>
 
@@ -62,10 +56,14 @@
         const modelViewer = document.getElementById('ar-model-viewer');
 
         openArBtn.addEventListener('click', () => {
+            // Универсальный вызов AR для iOS (Quick Look) и Android (Scene Viewer)
             if (modelViewer.canActivateAR) {
                 modelViewer.activateAR();
             } else {
-                alert('Режим WebXR AR не поддерживается на этом устройстве. Убедитесь, что вы открываете сайт со смартфона с поддержкой AR.');
+                // Запасной вариант, если браузер заблокировал прямой вызов
+                modelViewer.activateAR().catch(err => {
+                    alert('Пожалуйста, нажмите на встроенную AR-кнопку на экране или откройте через стандартный браузер (Safari для iPhone, Chrome для Android).');
+                });
             }
         });
     </script>
