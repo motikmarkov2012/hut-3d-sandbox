@@ -11,28 +11,24 @@
 
     <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60">
         <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-orange-400 bg-orange-950/60 px-2.5 py-1 border border-orange-800/60">v1.8 (Фикс Android AR)</span>
+        <span class="text-xs text-teal-400 bg-teal-950/60 px-2.5 py-1 border border-teal-800/60">v1.9 (Фикс масштаба Android)</span>
     </header>
 
     <main id="welcome-screen" class="flex-1 flex flex-col items-center justify-center px-4">
         <div class="max-w-md text-center space-y-6">
             <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
             <p class="text-sm text-zinc-400 leading-relaxed">
-                Нажмите кнопку ниже, чтобы запустить камеру и разместить модель.
+                Теперь размер зафиксирован и для Android, и для iPhone. Нажмите кнопку для запуска камеры.
             </p>
             <div class="pt-4">
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-orange-950/50">
-                    Запустить камеру (Android & iOS)
+                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-teal-950/50">
+                    Запустить камеру (AR)
                 </button>
-            </div>
-            <!-- Ссылка-подсказка для Android, если AR не поддерживается -->
-            <div id="android-warning" class="hidden text-xs text-amber-500/80 pt-2">
-                Для работы AR на Android требуется приложение «Google Play Services for AR». Если камера не открылась, обновите его в Google Play.
             </div>
         </div>
     </main>
 
-    <!-- Скрытый model-viewer с принудительным масштабом и Scene Viewer для Android -->
+    <!-- Скрытый model-viewer с фиксированным ar-scale для Android -->
     <div class="hidden">
         <model-viewer 
             id="ar-model-viewer"
@@ -40,6 +36,7 @@
             scale="0.001 0.001 0.001" 
             ar
             ar-modes="scene-viewer quick-look webxr"
+            ar-scale="fixed"
             camera-controls>
         </model-viewer>
     </div>
@@ -47,23 +44,11 @@
     <script>
         const openArBtn = document.getElementById('open-ar-btn');
         const modelViewer = document.getElementById('ar-model-viewer');
-        const androidWarning = document.getElementById('android-warning');
-
-        // Определяем, Android ли это, чтобы показать подсказку при необходимости
-        const isAndroid = /android/i.test(navigator.userAgent);
-        if (isAndroid) {
-            androidWarning.classList.remove('hidden');
-        }
 
         openArBtn.addEventListener('click', () => {
-            // Пытаемся активировать AR принудительно
             modelViewer.activateAR().catch((err) => {
                 console.log("AR error:", err);
-                if (isAndroid) {
-                    alert('Не удалось запустить AR. Убедитесь, что у вас установлен Chrome и обновлены сервисы Google Play для AR.');
-                } else {
-                    alert('Откройте эту страницу в Safari на iPhone или Chrome на Android.');
-                }
+                alert('Не удалось запустить AR. Убедитесь, что вы открыли сайт через Chrome (на Android) или Safari (на iPhone) и обновили сервисы Google Play для AR.');
             });
         });
     </script>
