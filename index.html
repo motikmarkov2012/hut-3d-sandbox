@@ -3,43 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Просмотр — Баба Яга (v2.0)</title>
+    <title>Баба Яга — 3D Sandbox</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col justify-between select-none">
 
-    <!-- Шапка -->
-    <header class="w-full p-6 flex justify-between items-center border-b border-zinc-800/60 z-10">
-        <h1 class="text-sm font-medium tracking-widest uppercase text-zinc-400">Команда «Баба Яга»</h1>
-        <span class="text-xs text-rose-400 bg-rose-950/60 px-2.5 py-1 border border-rose-800/60">v2.0 (Интерактив и прозрачность)</span>
+    <!-- Минималистичная шапка -->
+    <header class="w-full p-6 flex justify-between items-center border-b border-zinc-900 z-10">
+        <h1 class="text-xs tracking-widest uppercase text-zinc-500">Баба Яга</h1>
+        <span class="text-xs text-blue-500">v3.0</span>
     </header>
 
-    <!-- Основной экран -->
+    <!-- Главный экран с одной кнопкой -->
     <main id="welcome-screen" class="flex-1 flex flex-col items-center justify-center px-4">
-        <div class="max-w-md text-center space-y-6">
-            <h2 class="text-3xl font-light tracking-tight text-white">Избушка Бабы Яги в AR</h2>
-            <p class="text-sm text-zinc-400 leading-relaxed">
-                В этой версии добавлена панель управления прозрачностью деталей для изучения внутренней структуры.
-            </p>
-            <div class="pt-4">
-                <button id="open-ar-btn" class="w-full sm:w-auto px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm tracking-wide rounded-none transition-colors duration-200 shadow-lg shadow-rose-950/50">
-                    Запустить камеру (AR)
-                </button>
-            </div>
-        </div>
+        <button id="open-ar-btn" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium tracking-wide transition-colors shadow-lg shadow-blue-950/50">
+            Запустить камеру
+        </button>
     </main>
 
-    <!-- Контейнер с 3D просмотрщиком и панелью инструментов (появится при запуске на экране или доступен для отладки) -->
-    <div id="viewer-wrapper" class="absolute inset-0 pt-20 pb-6 px-4 flex flex-col justify-between hidden">
-        <!-- Панель управления прозрачностью прямо поверх экрана -->
-        <div class="flex flex-wrap gap-2 justify-center z-20">
-            <button onclick="toggleTransparency(0)" class="px-4 py-2 bg-zinc-900/95 hover:bg-zinc-800 text-xs text-zinc-200 border border-zinc-700 backdrop-blur-md transition-all">
-                Сделать деталь 1 прозрачной
-            </button>
-            <button onclick="resetTransparency()" class="px-4 py-2 bg-rose-900/80 hover:bg-rose-800 text-xs text-white border border-rose-700 backdrop-blur-md transition-all">
-                Вернуть всё как было
-            </button>
+    <!-- Экран просмотрщика (скрыт до запуска) -->
+    <div id="viewer-container" class="absolute inset-0 pt-20 pb-6 px-4 flex flex-col justify-between hidden bg-zinc-950">
+        
+        <!-- Панель управления прозрачностью (появляется при клике на модель) -->
+        <div id="control-panel" class="absolute top-24 left-1/2 -translate-x-1/2 z-20 bg-zinc-900/90 border border-zinc-800 px-5 py-3 backdrop-blur-md hidden flex items-center gap-4 shadow-xl">
+            <span class="text-xs text-zinc-400 tracking-wider">Прозрачность: <span id="opacity-val">50</span>%</span>
+            <input id="opacity-slider" type="range" min="10" max="100" value="50" class="accent-blue-500 cursor-pointer">
+            <button id="close-panel" class="text-xs text-zinc-500 hover:text-white ml-2">✕</button>
         </div>
 
         <div class="flex-1 w-full h-full relative">
@@ -51,7 +44,7 @@
                 ar-modes="scene-viewer quick-look webxr"
                 ar-scale="fixed"
                 camera-controls
-                class="w-full h-full">
+                class="w-full h-full cursor-pointer">
             </model-viewer>
         </div>
     </div>
@@ -59,43 +52,61 @@
     <script>
         const openArBtn = document.getElementById('open-ar-btn');
         const welcomeScreen = document.getElementById('welcome-screen');
-        const viewerWrapper = document.getElementById('viewer-wrapper');
+        const viewerContainer = document.getElementById('viewer-container');
         const modelViewer = document.getElementById('ar-model-viewer');
+        const controlPanel = document.getElementById('control-panel');
+        const opacitySlider = document.getElementById('opacity-slider');
+        const opacityVal = document.getElementById('opacity-val');
+        const closePanelBtn = document.getElementById('close-panel');
 
+        let isTransparent = false;
+
+        // Запуск (пытаемся AR, если нет — открываем веб-просмотрщик с интераквом)
         openArBtn.addEventListener('click', () => {
-            // Пытаемся запустить AR режим на телефонах
-            modelViewer.activateAR().catch((err) => {
-                console.log("AR mode fallback/error:", err);
-                // Если AR на устройстве не запустилось, показываем интерфейс на экране для теста
+            modelViewer.activateAR().catch(() => {
                 welcomeScreen.classList.add('hidden');
-                viewerWrapper.classList.remove('hidden');
+                viewerContainer.classList.remove('hidden');
             });
         });
 
-        // Функция изменения прозрачности конкретного материала по индексу
-        async function toggleTransparency(materialIndex) {
-            await modelViewer.updateComplete;
-            const materials = modelViewer.model.materials;
-            if (materials && materials[materialIndex]) {
-                const mat = materials[materialIndex];
-                // Получаем текущий цвет и альфа-канал
-                const currentColor = mat.pbrMetallicRoughness.baseColorFactor;
-                // Если цвет уже полупрозрачный, делаем непрозрачным, и наоборот
-                const newAlpha = currentColor[3] < 1.0 ? 1.0 : 0.2;
-                mat.pbrMetallicRoughness.setBaseColorFactor([currentColor[0], currentColor[1], currentColor[2], newAlpha]);
+        // Клик по модели в обычном режиме браузера
+        modelViewer.addEventListener('click', async () => {
+            if (viewerContainer.classList.contains('hidden')) return;
+            
+            isTransparent = !isTransparent;
+            const targetOpacity = isTransparent ? 0.5 : 1.0;
+            
+            await setModelOpacity(targetOpacity);
+            
+            if (isTransparent) {
+                opacitySlider.value = 50;
+                opacityVal.textContent = "50";
+                controlPanel.classList.remove('hidden');
             } else {
-                alert('У модели не найдены раздельные материалы по этому индексу. Проверьте экспорт из SolidWorks.');
+                controlPanel.classList.add('hidden');
             }
-        }
+        });
 
-        // Возврат исходной непрозрачности всем материалам
-        async function resetTransparency() {
+        // Управление слайдером прозрачности (от 10% до 100%)
+        opacitySlider.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            opacityVal.textContent = val;
+            const alpha = val / 100;
+            await setModelOpacity(alpha);
+        });
+
+        closePanelBtn.addEventListener('click', () => {
+            controlPanel.classList.add('hidden');
+        });
+
+        // Функция изменения прозрачности всех материалов модели
+        async function setModelOpacity(alpha) {
             await modelViewer.updateComplete;
-            const materials = modelViewer.model.materials;
+            const materials = modelViewer.model?.materials;
             if (materials) {
                 materials.forEach(mat => {
                     const c = mat.pbrMetallicRoughness.baseColorFactor;
-                    mat.pbrMetallicRoughness.setBaseColorFactor([c[0], c[1], c[2], 1.0]);
+                    mat.pbrMetallicRoughness.setBaseColorFactor([c[0], c[1], c[2], alpha]);
                 });
             }
         }
